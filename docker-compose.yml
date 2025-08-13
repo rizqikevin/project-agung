@@ -1,0 +1,62 @@
+version: "3.8"
+
+services:
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: projectagung_app
+        ports:
+            - "9099:80"
+        volumes:
+            - .:/var/www/html
+            - ./storage:/var/www/html/storage
+        depends_on:
+            - mysql
+        networks:
+            - projectagung_network
+        environment:
+            - APP_ENV=production
+            - APP_DEBUG=false
+            - DB_HOST=mysql
+            - DB_PORT=3306
+            - DB_DATABASE=jurusan_db
+            - DB_USERNAME=laravel_user
+            - DB_PASSWORD=laravel_password
+
+    mysql:
+        image: mysql:5.7
+        container_name: projectagung_mysql
+        ports:
+            - "3311:3306"
+        environment:
+            MYSQL_ROOT_PASSWORD: root_password
+            MYSQL_DATABASE: jurusan_db
+            MYSQL_USER: laravel_user
+            MYSQL_PASSWORD: laravel_password
+        volumes:
+            - mysql_data:/var/lib/mysql
+            - ./jurusan_db.sql:/docker-entrypoint-initdb.d/jurusan_db.sql
+        networks:
+            - projectagung_network
+
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        container_name: projectagung_phpmyadmin
+        ports:
+            - "9010:80"
+        environment:
+            PMA_HOST: mysql
+            PMA_PORT: 3306
+            MYSQL_ROOT_PASSWORD: root_password
+        depends_on:
+            - mysql
+        networks:
+            - projectagung_network
+
+volumes:
+    mysql_data:
+
+networks:
+    projectagung_network:
+        driver: bridge
