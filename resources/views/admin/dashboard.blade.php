@@ -69,7 +69,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        fetch('{{ route("admin.grafikData") }}')
+        fetch('{{ route("admin.grafikData", [], false) }}')
             .then(res => res.json())
             .then(data => {
                 const ctx = document.getElementById('grafikJurusan').getContext('2d');
